@@ -8,19 +8,32 @@ export default class Renderer {
     this.canvas.width = CANVAS.WIDTH;
     this.canvas.height = CANVAS.HEIGHT;
 
+    // Generate star positions once
+    this.stars = [];
+    for (let i = 0; i < 200; i++) {
+      this.stars.push({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 1.5 + 0.5, // Random size between 0.5 and 2
+      });
+    }
+
     const visWidth = 300;
     const visHeight = 350;
     this.nnVisualizer = new NeuralNetworkVisualizer(
       this.ctx,
-      this.canvas.width - visWidth - 10,
-      this.canvas.height - visHeight - 10,
+      this.canvas.width - visWidth - 100,
+      this.canvas.height - visHeight - 100,
       visWidth,
       visHeight
     );
   }
 
   clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = "transparent";
+    this.ctx.fillStyle = "rgba(4, 4, 29, 1)";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   drawBodies(bodies, drawTrails = true) {
@@ -32,9 +45,23 @@ export default class Renderer {
     }
   }
 
+  drawStarts(){
+    this.ctx.shadowBlur = 10;
+    this.ctx.shadowColor = "white";
+    for (const star of this.stars) {
+      this.ctx.beginPath();
+      this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      this.ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      this.ctx.fill();
+      this.ctx.closePath();
+    }
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = "transparent";
+  }
+
   drawUI(stats) {
     this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = "white";
 
     this.ctx.fillText(`Tick: ${stats.score}`, 10, 55);
     this.ctx.fillText(`Spawn: ${stats.spawnRange || "N/A"}px`, 10, 80);

@@ -1,6 +1,10 @@
 import { NEURAL_NETWORK, ACTIONS } from "../config/constants.js";
 
 export default class NeuralNetworkVisualizer {
+  neuron = {
+    width: 26,
+    height: 16,
+  };
   constructor(ctx, x, y, width, height) {
     this.ctx = ctx;
     this.x = x;
@@ -25,7 +29,7 @@ export default class NeuralNetworkVisualizer {
       "dist",
       "fuel",
     ];
-    this.outputLabels = ["UP", "DOWN", "RIGHT", "LEFT","NONE"];
+    this.outputLabels = ["UP", "DOWN", "RIGHT", "LEFT", "NONE"];
   }
 
   draw(rocket) {
@@ -38,24 +42,19 @@ export default class NeuralNetworkVisualizer {
 
     if (!layers || layers.length === 0) return;
 
-
-    this.ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    this.ctx.fillStyle = "rgba(255, 255, 255, 0)";
     this.ctx.fillRect(this.x, this.y, this.width, this.height);
-
-
-    this.ctx.fillStyle = "#000000ff";
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = "transparent";
+    this.ctx.fillStyle = "#ffffffff";
     this.ctx.font = "14px Arial";
     this.ctx.fillText("Neural Network - Last Rocket", this.x + 10, this.y + 20);
 
-
     const layerPositions = this._calculateLayerPositions(layers);
-
 
     this._drawConnections(layerPositions, weights, activations);
 
-
     this._drawNeurons(layerPositions, activations, layers);
-
 
     this._drawLabels(layerPositions, layers);
   }
@@ -109,18 +108,25 @@ export default class NeuralNetworkVisualizer {
           const activation = Math.max(0, Math.min(1, rawActivation));
 
           const intensity = Math.abs(weight) * activation;
-          const alpha = Math.min(0.8, intensity * 2);
-
+          const alpha = Math.min(1, intensity * 2);
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = "rgba(255, 255, 255, 1)";
           if (weight > 0) {
-            this.ctx.strokeStyle = `rgba(100, 200, 100, ${alpha})`;
+            this.ctx.strokeStyle = `rgba(255, 255, 255, 1)`;
           } else {
-            this.ctx.strokeStyle = `rgba(200, 100, 100, ${alpha})`;
+            this.ctx.strokeStyle = `rgba(255, 255, 255, 0.0)`;
           }
 
           this.ctx.lineWidth = Math.max(0.5, Math.abs(weight) * 2);
           this.ctx.beginPath();
-          this.ctx.moveTo(currentLayer[i].x, currentLayer[i].y);
-          this.ctx.lineTo(nextLayer[j].x, nextLayer[j].y);
+          this.ctx.moveTo(
+            currentLayer[i].x + this.neuron.width,
+            currentLayer[i].y + this.neuron.height / 2,
+          );
+          this.ctx.lineTo(
+            nextLayer[j].x,
+            nextLayer[j].y + this.neuron.height / 2,
+          );
           this.ctx.stroke();
         }
       }
@@ -140,40 +146,48 @@ export default class NeuralNetworkVisualizer {
         }
         const activation = Math.max(0, Math.min(1, rawActivation));
 
+        this.ctx.fillStyle = `rgba(255, 255, 255, 1)`;
 
-        const baseRadius = 6;
-        const radius = baseRadius + activation * 4;
-
-
-        const green = Math.floor(100 + activation * 155);
-        const blue = Math.floor(100 + activation * 155);
-
-
-        this.ctx.fillStyle = `rgb(${Math.floor(
-          50 + activation * 50
-        )}, ${green}, ${blue})`;
+        let fillRectPercent =
+          activation * 100 < 0
+            ? 0
+            : activation * 100 > 100
+              ? 100
+              : activation * 100;
         this.ctx.beginPath();
-        this.ctx.arc(neuron.x, neuron.y, radius, 0, 2 * Math.PI);
+        this.ctx.rect(
+          neuron.x,
+          neuron.y,
+          (this.neuron.width * fillRectPercent) / 100,
+          this.neuron.height,
+        );
         this.ctx.fill();
-
-        // Borda
-        this.ctx.strokeStyle = "#000000ff";
-        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = "#ffffffff";
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.rect(
+          neuron.x,
+          neuron.y,
+          this.neuron.width,
+          this.neuron.height,
+        );
         this.ctx.stroke();
       }
     }
   }
 
   _drawLabels(positions, layers) {
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = "transparent";
     this.ctx.font = "9px Arial";
-    this.ctx.fillStyle = "#000000ff";
+    this.ctx.fillStyle = "#ffffffff";
 
     const inputLayer = positions[0];
     for (let i = 0; i < inputLayer.length && i < this.inputLabels.length; i++) {
       this.ctx.fillText(
         this.inputLabels[i],
         inputLayer[i].x - 35,
-        inputLayer[i].y + 3
+        inputLayer[i].y + 3,
       );
     }
 
@@ -186,23 +200,24 @@ export default class NeuralNetworkVisualizer {
       this.ctx.fillText(
         this.outputLabels[i],
         outputLayer[i].x + 12,
-        outputLayer[i].y + 3
+        outputLayer[i].y + 3,
       );
     }
-
-    this.ctx.fillStyle = "#000000ff";
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = "transparent";
+    this.ctx.fillStyle = "#ffffffff";
     this.ctx.font = "10px Arial";
     for (let l = 0; l < positions.length; l++) {
       const label =
         l === 0
           ? "Input"
           : l === positions.length - 1
-          ? "Output"
-          : `Hidden ${l}`;
+            ? "Output"
+            : `Hidden ${l}`;
       this.ctx.fillText(
         label,
         positions[l][0].x - 15,
-        this.y + this.height - 10
+        this.y + this.height - 10,
       );
     }
   }

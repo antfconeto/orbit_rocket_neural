@@ -43,7 +43,6 @@ export default class PopulationManager {
     const centerX = BODY_DEFAULTS.POSITION.x;
     const centerY = BODY_DEFAULTS.POSITION.y;
 
-    // Sorteia aleatoriamente um range de spawn
     const randomIndex = Math.floor(Math.random() * SPAWN.RANGES.length);
     this.currentSpawnRange = SPAWN.RANGES[randomIndex];
     const minDist = this.currentSpawnRange.minDist;

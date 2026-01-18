@@ -1,6 +1,6 @@
 export const CANVAS = {
-  WIDTH: 1400,
-  HEIGHT: 800,
+  WIDTH: window.innerWidth,
+  HEIGHT: window.innerHeight,
   BACKGROUND_COLOR: "#000000",
 };
 
@@ -22,8 +22,6 @@ export const FITNESS = {
 
 export const SPAWN = {
   RANGES: [
-    { minDist: 400, maxDist: 600 },
-    { minDist: 200, maxDist: 400 },
     { minDist: 100, maxDist: 200 },
   ],
 };
@@ -32,15 +30,15 @@ export const BODY_DEFAULTS = {
   MODEL: "circle",
   COLOR: "#22c55e",
   MASS: 1,
-  RADIUS: 10,
-  POSITION: { x: 400, y: 400 },
+  RADIUS: 30,
+  POSITION: { x: CANVAS.WIDTH/2, y: CANVAS.HEIGHT/2 },
   VELOCITY: { x: 0, y: 0 },
 };
 
 export const ROCKET = {
   MASS: 0.0001,
   RADIUS: 4,
-  COLOR: "red",
+  COLOR: "rgba(255, 255, 255, 1)",
   THRUST_FORCE: 0.000000001,
   SPAWN_AREA: { width: 800, height: 800 },
   FUEL: 500,
@@ -56,9 +54,9 @@ export const NEURAL_NETWORK = {
 };
 
 export const SIMULATION = {
-  POPULATION_SIZE: 100,
+  POPULATION_SIZE: 1000,
   MAX_TICKS_PER_EPOCH: 2000,
-  TRAIL_MAX_LENGTH: 200,
+  TRAIL_MAX_LENGTH: 100,
 };
 
 export const STORAGE_KEYS = {

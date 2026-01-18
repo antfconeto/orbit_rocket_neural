@@ -110,13 +110,17 @@ export default class Body {
       ctx.moveTo(prev.x, prev.y);
       ctx.lineTo(curr.x, curr.y);
     }
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
     ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
     ctx.stroke();
   }
 
   draw(ctx) {
     this._ctx = ctx;
+    ctx.globalAlpha = 1;
+
     ctx.fillStyle = this.color;
 
     if (this.model === "rect") {
@@ -124,14 +128,14 @@ export default class Body {
         this.position.x,
         this.position.y,
         this.scale.w,
-        this.scale.h
+        this.scale.h,
       );
     } else {
       ctx.beginPath();
+      ctx.shadowBlur = 40;
+      ctx.shadowColor = this.color;
       ctx.arc(this.position.x, this.position.y, this.scale.r, 0, 2 * Math.PI);
       ctx.fill();
-      ctx.strokeStyle = "black";
-      ctx.stroke();
       ctx.closePath();
     }
   }

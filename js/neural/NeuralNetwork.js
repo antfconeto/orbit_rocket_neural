@@ -1,6 +1,7 @@
 import { NEURAL_NETWORK } from "../config/constants.js";
 
 export default class NeuralNetwork {
+  isToMutate = true;
   constructor(
     inputSize = NEURAL_NETWORK.INPUT_SIZE,
     hiddenLayers = NEURAL_NETWORK.HIDDEN_LAYERS,

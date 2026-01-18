@@ -58,10 +58,9 @@ export default class Simulation {
 
   _render() {
     this.renderer.clear();
-
+    this.renderer.drawStarts();
     const bodies = this.population.getAllBodies();
     this.renderer.drawBodies(bodies);
-
     const stats = this.population.getStats();
     this.renderer.drawUI({
       score: this.tickCount,
